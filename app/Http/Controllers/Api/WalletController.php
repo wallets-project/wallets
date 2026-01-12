@@ -443,6 +443,7 @@ class WalletController extends BaseApiController
     {
         $data = $request->validate([
             'from_wallet_id' => ['nullable', 'integer', 'exists:wallets,id'],
+            'wallet_id' => ['nullable', 'integer', 'exists:wallets,id'],
             'to_phone' => ['required', 'string', 'exists:users,phone'],
             'amount'   => ['required', 'numeric', 'min:0.01'],
             'note'     => ['nullable', 'string', 'max:255'],
@@ -450,8 +451,9 @@ class WalletController extends BaseApiController
 
         /** @var User $fromUser */
         $fromUser = $request->user();
-        $fromWallet = isset($data['from_wallet_id'])
-            ? $this->walletService->getUserWalletOrFail($fromUser, (int) $data['from_wallet_id'])
+        $fromWalletKey = $data['from_wallet_id'] ?? $data['wallet_id'] ?? null;
+        $fromWallet = isset($fromWalletKey)
+            ? $this->walletService->getUserWalletOrFail($fromUser, (int) $fromWalletKey)
             : $this->walletService->getOrCreateUserMainWallet($fromUser);
         $toUser   = User::where('phone', $data['to_phone'])->first();
 

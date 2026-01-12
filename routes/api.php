@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\WalletController;
 
 Route::prefix('v1')->group(function () {
@@ -28,6 +29,9 @@ Route::prefix('v1')->group(function () {
 
     // ---------------- Wallets Protected (لازم user.active) ----------------
     Route::middleware(['auth:sanctum', 'user.status'])->group(function () {
+
+    // Users
+    Route::get('users', [UserController::class, 'index']);
 
     // Wallet Summary
     Route::get('wallets',               [WalletController::class, 'summary']);
